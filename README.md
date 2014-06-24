@@ -1,5 +1,3 @@
-sketch-plugins
-==============
 Download the plugin you want and double-click it to install.
 
 ### Name Artboards
