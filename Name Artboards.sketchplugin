@@ -1,19 +1,18 @@
-// Go thru each artboard and generate a text label for export
 var artboards = [[doc currentPage] artboards];
-for(var i=0; i< artboards.length(); i++){
 
+for(var i=0; i< artboards.length(); i++){
   var artboard = artboards[i];
   var artboardName = [artboard name];
 
+  // Create text layer and set properties
   var textLayer = [[doc currentPage] addLayerOfType: 'text'];
-
   [textLayer setName: 'temp ' + artboardName + ' label'];
   [textLayer setStringValue: artboardName];
   [textLayer setFontSize: 12];
   [textLayer setFontPostscriptName: 'Helvetica'];
   [textLayer setLineSpacing: 16];
 
+  // Position text layer approximately where it is in Sketch
   [[textLayer frame] setX:[[artboard frame] x] + 2];
   [[textLayer frame] setY:[[artboard frame] y] - [[textLayer frame] height] - 4];
-
 }
