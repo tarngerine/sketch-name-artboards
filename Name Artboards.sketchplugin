@@ -1,18 +1,47 @@
+var groupName = 'Artboard labels'
 var artboards = [[doc currentPage] artboards];
+
+// Remove any previous existing Artboard labels group
+allLayers = [[doc currentPage] layers];
+for(var i=0; i< allLayers.length(); i++){
+  var layer = [allLayers objectAtIndex:i];
+  if ([layer name] == groupName) {
+    [layer removeFromParent];
+  }
+}
+
+// New group to hold labels
+var group = [[doc currentPage] addLayerOfType: 'group'];
+[group setName: groupName]
 
 for(var i=0; i< artboards.length(); i++){
   var artboard = artboards[i];
   var artboardName = [artboard name];
 
-  // Create text layer and set properties
+  // Create label and set properties
   var textLayer = [[doc currentPage] addLayerOfType: 'text'];
-  [textLayer setName: 'temp ' + artboardName + ' label'];
+  [textLayer setName: artboardName];
   [textLayer setStringValue: artboardName];
   [textLayer setFontSize: 12];
   [textLayer setFontPostscriptName: 'Helvetica'];
   [textLayer setLineSpacing: 16];
 
-  // Position text layer approximately where it is in Sketch
+  // Position label approximately where it is in Sketch
   [[textLayer frame] setX:[[artboard frame] x] + 2];
   [[textLayer frame] setY:[[artboard frame] y] - [[textLayer frame] height] - 4];
+
+  // Move label into group
+  [textLayer removeFromParent];
+  [group addLayer: textLayer];
 }
+
+// Select each layer to make group the size of the layers within
+groupLayers = [group layers];
+for(var i=0; i< groupLayers.length(); i++){
+  var layer = [groupLayers objectAtIndex:i];
+  [layer select:true byExpandingSelection:false];
+}
+
+// Lock group
+[group setIsLocked:true];
+[doc showMessage: [groupLayers count] + ' artboard labels created in "Artboard labels" group.'];

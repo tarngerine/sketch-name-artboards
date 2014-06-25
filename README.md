@@ -2,4 +2,6 @@
 
 ### Name Artboards
 Goes through each artboards and creates a text label where the artboard name sits so it is visible when exporting with slices.
-![Creates 'temp' labels per artboard at the size and position of the natively rendered artboard names](http://cl.ly/image/2A0s2a2Q3D3w/Image%202014-06-24%20at%204.07.09%20PM.png)
+![Creates 'temp' labels per artboard at the size and position of the natively rendered artboard names](http://cl.ly/image/3W0X450T1v1z/Image%202014-06-25%20at%2012.14.49%20PM.png)
+
+If you move / change artboard names, just re-run the plugin and it will replace the old 'Artboard labels' group with a new one!
