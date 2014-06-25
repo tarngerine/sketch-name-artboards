@@ -1,3 +1,5 @@
+// Name Artboards v1.1
+
 var groupName = 'Artboard labels'
 var artboards = [[doc currentPage] artboards];
 
