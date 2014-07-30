@@ -1,4 +1,4 @@
-// Name Artboards v1.1
+// Name Artboards v1.1 — Julius Tarng
 
 var groupName = 'Artboard labels'
 var artboards = [[doc currentPage] artboards];
