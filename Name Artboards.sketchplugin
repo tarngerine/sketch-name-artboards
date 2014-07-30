@@ -12,6 +12,29 @@ for(var i=0; i< allLayers.length(); i++){
   }
 }
 
+// Query resolution for appropriate font size and spacings
+function createSelect(msg, items, selectedItemIndex){
+  selectedItemIndex = selectedItemIndex || 0
+
+  var accessory = [[NSComboBox alloc] initWithFrame:NSMakeRect(0,0,200,25)]
+  [accessory addItemsWithObjectValues:items]
+  [accessory selectItemAtIndex:selectedItemIndex]
+
+  var alert = [[NSAlert alloc] init]
+  [alert setMessageText:msg]
+  [alert addButtonWithTitle:'OK']
+  [alert addButtonWithTitle:'Cancel']
+  [alert setAccessoryView:accessory]
+
+  var responseCode = [alert runModal]
+  var sel = [accessory indexOfSelectedItem]
+
+  return [responseCode, sel]
+}
+var options = ['1x', '2x']
+var choice = createSelect('What resolution are you working at?', options, 1)
+var labelMultiplier = choice[1] + 1;
+
 // New group to hold labels
 var group = [[doc currentPage] addLayerOfType: 'group'];
 [group setName: groupName]
@@ -24,13 +47,19 @@ for(var i=0; i< artboards.length(); i++){
   var textLayer = [[doc currentPage] addLayerOfType: 'text'];
   [textLayer setName: artboardName];
   [textLayer setStringValue: artboardName];
-  [textLayer setFontSize: 12];
+  [textLayer setFontSize: 12 * labelMultiplier];
   [textLayer setFontPostscriptName: 'Helvetica'];
-  [textLayer setLineSpacing: 16];
+  [textLayer setLineSpacing: 16 * labelMultiplier];
+  var color = [[MSColor alloc] init];
+  [color setRed: 188/255];
+  [color setGreen: 188/255];
+  [color setBlue: 188/255];
+  [color setAlpha: 1.0];
+  [textLayer setTextColor: color];
 
   // Position label approximately where it is in Sketch
-  [[textLayer frame] setX:[[artboard frame] x] + 2];
-  [[textLayer frame] setY:[[artboard frame] y] - [[textLayer frame] height] - 4];
+  [[textLayer frame] setX:[[artboard frame] x] + (2 * labelMultiplier)];
+  [[textLayer frame] setY:[[artboard frame] y] - [[textLayer frame] height] - (4 * labelMultiplier)];
 
   // Move label into group
   [textLayer removeFromParent];
