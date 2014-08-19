@@ -1,4 +1,4 @@
-// Name Artboards v1.1 — Julius Tarng
+// Name Artboards v1.2 — Julius Tarng
 
 var groupName = 'Artboard labels'
 var artboards = [[doc currentPage] artboards];
@@ -16,9 +16,19 @@ for(var i=0; i< allLayers.length(); i++){
 function createSelect(msg, items, selectedItemIndex){
   selectedItemIndex = selectedItemIndex || 0
 
-  var accessory = [[NSComboBox alloc] initWithFrame:NSMakeRect(0,0,200,25)]
-  [accessory addItemsWithObjectValues:items]
-  [accessory selectItemAtIndex:selectedItemIndex]
+  var accessory = [[NSView alloc] initWithFrame:NSMakeRect(0,0,200,62)]
+
+  var combobox = [[NSComboBox alloc] initWithFrame:NSMakeRect(0,37,200,25)]
+  [combobox addItemsWithObjectValues:items]
+  [combobox selectItemAtIndex:selectedItemIndex]
+
+  var checkbox = [[NSButton alloc] initWithFrame:NSMakeRect(0,0,200,25)]
+  [checkbox setButtonType:NSSwitchButton]
+  [checkbox setTitle:@"Draw Slice"]
+  [checkbox setState:NSOnState]
+
+  [accessory addSubview:checkbox]
+  [accessory addSubview:combobox]
 
   var alert = [[NSAlert alloc] init]
   [alert setMessageText:msg]
@@ -27,52 +37,112 @@ function createSelect(msg, items, selectedItemIndex){
   [alert setAccessoryView:accessory]
 
   var responseCode = [alert runModal]
-  var sel = [accessory indexOfSelectedItem]
+  var combosel = [combobox indexOfSelectedItem]
+  var checksel = [checkbox state] == NSOnState
 
-  return [responseCode, sel]
+  return [responseCode, combosel, checksel]
 }
 var options = ['1x', '2x']
 var choice = createSelect('What resolution are you working at?', options, 1)
-var labelMultiplier = choice[1] + 1;
+var labelMultiplier = choice[1] + 1
+var shouldDrawSlice = choice[2]
+log(choice[0])
 
-// New group to hold labels
-var group = [[doc currentPage] addLayerOfType: 'group'];
-[group setName: groupName]
+if (choice[0] == NSAlertFirstButtonReturn) {
+  //
+  // Name artboards
+  //
 
-for(var i=0; i< artboards.length(); i++){
-  var artboard = artboards[i];
-  var artboardName = [artboard name];
+  // New group to hold labels
+  var group = [[doc currentPage] addLayerOfType: 'group'];
+  [group setName: groupName]
 
-  // Create label and set properties
-  var textLayer = [[doc currentPage] addLayerOfType: 'text'];
-  [textLayer setName: artboardName];
-  [textLayer setStringValue: artboardName];
-  [textLayer setFontSize: 12 * labelMultiplier];
-  [textLayer setFontPostscriptName: 'Helvetica'];
-  [textLayer setLineSpacing: 16 * labelMultiplier];
-  var color = [[MSColor alloc] init];
-  [color setRed: 188/255];
-  [color setGreen: 188/255];
-  [color setBlue: 188/255];
-  [color setAlpha: 1.0];
-  [textLayer setTextColor: color];
+  for(var i=0; i< artboards.length(); i++){
+    var artboard = artboards[i];
+    var artboardName = [artboard name];
 
-  // Position label approximately where it is in Sketch
-  [[textLayer frame] setX:[[artboard frame] x] + (2 * labelMultiplier)];
-  [[textLayer frame] setY:[[artboard frame] y] - [[textLayer frame] height] - (4 * labelMultiplier)];
+    // Create label and set properties
+    var textLayer = [[doc currentPage] addLayerOfType: 'text'];
+    [textLayer setName: artboardName];
+    [textLayer setStringValue: artboardName];
+    [textLayer setFontSize: 12 * labelMultiplier];
+    [textLayer setFontPostscriptName: 'Helvetica'];
+    [textLayer setLineSpacing: 16 * labelMultiplier];
+    var color = [[MSColor alloc] init];
+    [color setRed: 188/255];
+    [color setGreen: 188/255];
+    [color setBlue: 188/255];
+    [color setAlpha: 1.0];
+    [textLayer setTextColor: color];
 
-  // Move label into group
-  [textLayer removeFromParent];
-  [group addLayer: textLayer];
+    // Position label approximately where it is in Sketch
+    [[textLayer frame] setX:[[artboard frame] x] + (2 * labelMultiplier)];
+    [[textLayer frame] setY:[[artboard frame] y] - [[textLayer frame] height] - (4 * labelMultiplier)];
+
+    // Move label into group
+    [textLayer removeFromParent];
+    [group addLayer: textLayer];
+  }
+
+  // Select each layer to make group the size of the layers within
+  groupLayers = [group layers];
+  for(var i=0; i< groupLayers.length(); i++){
+    var layer = [groupLayers objectAtIndex:i];
+    [layer select:true byExpandingSelection:false];
+  }
+
+  // Lock group
+  [group setIsLocked:true];
+  [doc showMessage: [groupLayers count] + ' artboard labels created in "Artboard labels" group.'];
+
+
+
+  //
+  // Draw slice
+  //
+
+  if (shouldDrawSlice) {
+    var minX = 999999999;
+    var minY = 999999999;
+    var maxX = -999999999;
+    var maxY = -999999999;
+
+    // Find min and max coordinates (+layer dimension) to figure out where to draw slice
+    allLayers = [[doc currentPage] layers];
+    for(var i=0; i< allLayers.length(); i++){
+      var layer = [allLayers objectAtIndex:i];
+      if ([layer isVisible]) {
+        x = [[layer frame] x];
+        y = [[layer frame] y];
+        w = [[layer frame] width];
+        h = [[layer frame] height];
+
+        if (x < minX) {
+          minX = x;
+        } else if ((x + w) > maxX) {
+          maxX = (x + w);
+        }
+
+        if (y < minY) {
+          minY = y;
+        } else if ((y + h) > maxY) {
+          maxY = (y + h);
+        }
+      }
+    }
+
+    // draw slice
+    var slice = [MSSliceLayer new];
+    var padding = 100;
+
+    [[slice frame] setX:minX - padding];
+    [[slice frame] setY:minY - padding];
+    [[slice frame] setWidth:maxX - minX + (padding*2)];
+    [[slice frame] setHeight:maxY - minY + (padding*2)];
+
+    // add slice to page
+    [[doc currentPage] addSlice:slice];
+    [[doc currentView] refresh];
+
+  }
 }
-
-// Select each layer to make group the size of the layers within
-groupLayers = [group layers];
-for(var i=0; i< groupLayers.length(); i++){
-  var layer = [groupLayers objectAtIndex:i];
-  [layer select:true byExpandingSelection:false];
-}
-
-// Lock group
-[group setIsLocked:true];
-[doc showMessage: [groupLayers count] + ' artboard labels created in "Artboard labels" group.'];
