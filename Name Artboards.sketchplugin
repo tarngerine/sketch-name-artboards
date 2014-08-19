@@ -141,7 +141,8 @@ if (choice[0] == NSAlertFirstButtonReturn) {
     [[slice frame] setHeight:maxY - minY + (padding*2)];
 
     // add slice to page
-    [[doc currentPage] addSlice:slice];
+    // [[doc currentPage] addSlice:slice];
+    [group addSlice:slice];
     [[doc currentView] refresh];
 
   }
