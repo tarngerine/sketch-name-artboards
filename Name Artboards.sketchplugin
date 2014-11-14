@@ -62,7 +62,7 @@ if (choice[0] == NSAlertFirstButtonReturn) {
     var artboardName = [artboard name];
 
     // Create label and set properties
-    var textLayer = [[doc currentPage] addLayerOfType: 'text'];
+    var textLayer = [group addLayerOfType: 'text'];
     [textLayer setName: artboardName];
     [textLayer setStringValue: artboardName];
     [textLayer setFontSize: 12 * labelMultiplier];
@@ -78,10 +78,6 @@ if (choice[0] == NSAlertFirstButtonReturn) {
     // Position label approximately where it is in Sketch
     [[textLayer frame] setX:[[artboard frame] x] + (2 * labelMultiplier)];
     [[textLayer frame] setY:[[artboard frame] y] - [[textLayer frame] height] - (4 * labelMultiplier)];
-
-    // Move label into group
-    [textLayer removeFromParent];
-    [group addLayer: textLayer];
   }
 
   // Select each layer to make group the size of the layers within
