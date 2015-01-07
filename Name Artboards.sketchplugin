@@ -1,5 +1,6 @@
 // Name Artboards v1.2 — Julius Tarng
 
+log("========================= sketch-name-artboards log =========================");
 var groupName = 'Artboard labels'
 var artboards = [[doc currentPage] artboards];
 
@@ -99,10 +100,10 @@ if (choice[0] == NSAlertFirstButtonReturn) {
   //
 
   if (shouldDrawSlice) {
-    var minX = 999999999;
-    var minY = 999999999;
-    var maxX = -999999999;
-    var maxY = -999999999;
+    var minX = NSIntegerMax,
+        minY = NSIntegerMax,
+        maxX = NSIntegerMin,
+        maxY = NSIntegerMin;
 
     // Find min and max coordinates (+layer dimension) to figure out where to draw slice
     allLayers = [[doc currentPage] layers];
@@ -113,32 +114,37 @@ if (choice[0] == NSAlertFirstButtonReturn) {
         y = [[layer frame] y];
         w = [[layer frame] width];
         h = [[layer frame] height];
+        log("Accounting for <" + [layer name] + "> at x:" + x + ", y:" + y + ", w:" + w + ", h:" + h);
 
         if (x < minX) {
           minX = x;
-        } else if ((x + w) > maxX) {
-          maxX = (x + w);
+          log("    minX updated to " + minX);
         }
-
+        if ((x + w) > maxX) {
+          maxX = (x + w);
+          log("    maxX updated to " + maxX);
+        }
         if (y < minY) {
           minY = y;
-        } else if ((y + h) > maxY) {
+          log("    minY updated to " + minY);
+        }
+        if ((y + h) > maxY) {
           maxY = (y + h);
+          log("    maxY updated to " + maxY);
         }
       }
     }
 
-    // draw slice
     var slice = [MSSliceLayer new];
     var padding = 100;
 
-    [[slice frame] setX:minX - padding];
-    [[slice frame] setY:minY - padding];
-    [[slice frame] setWidth:maxX - minX + (padding*2)];
-    [[slice frame] setHeight:maxY - minY + (padding*2)];
+    [[slice frame] setX: minX - padding];
+    [[slice frame] setY: minY - padding];
+    [[slice frame] setWidth: maxX - minX + (padding * 2)];
+    [[slice frame] setHeight: maxY - minY + (padding * 2)];
+    log(">> Drawing slice from (" + minX + ", " + minY + ") of dimension (" + (maxX - minX + (padding*2)) + ", " + (maxY - minY + (padding*2)) + ")" )
 
     [group addSlice: slice];
     [[doc currentView] refresh];
-
   }
 }
