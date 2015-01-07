@@ -138,6 +138,7 @@ if (choice[0] == NSAlertFirstButtonReturn) {
     log(">> Drawing slice from (" + minX + ", " + minY + ") of dimension (" + (maxX - minX + (padding*2)) + ", " + (maxY - minY + (padding*2)) + ")" )
 
     [group addSlice: slice];
+    [slice select:true byExpandingSelection:false];
     [[doc currentView] refresh];
   }
 }
