@@ -4,7 +4,7 @@ log("========================= sketch-name-artboards log =======================
 var groupName = 'Artboard labels'
 var artboards = [[doc currentPage] artboards];
 
-// Remove any previous existing Artboard labels group
+// Remove any previous existing 'Artboard labels' group
 allLayers = [[doc currentPage] layers];
 for(var i=0; i< [allLayers count]; i++){
   var layer = [allLayers objectAtIndex:i];
@@ -13,46 +13,43 @@ for(var i=0; i< [allLayers count]; i++){
   }
 }
 
-// Query resolution for appropriate font size and spacings
+// Query resolution for appropriate font size and spacings, ask if slice should be drawn
 function createSelect(msg, items, selectedItemIndex){
-  selectedItemIndex = selectedItemIndex || 0
+  selectedItemIndex = selectedItemIndex || 0;
 
-  var accessory = [[NSView alloc] initWithFrame:NSMakeRect(0,0,200,62)]
+  var accessory = [[NSView alloc] initWithFrame:NSMakeRect(0,0,200,62)];
 
-  var combobox = [[NSComboBox alloc] initWithFrame:NSMakeRect(0,37,200,25)]
-  [combobox addItemsWithObjectValues:items]
-  [combobox selectItemAtIndex:selectedItemIndex]
+  var combobox = [[NSComboBox alloc] initWithFrame:NSMakeRect(0,37,200,25)];
+  [combobox addItemsWithObjectValues:items];
+  [combobox selectItemAtIndex:selectedItemIndex];
 
-  var checkbox = [[NSButton alloc] initWithFrame:NSMakeRect(0,0,200,25)]
-  [checkbox setButtonType:NSSwitchButton]
-  [checkbox setTitle:@"Draw Slice"]
-  [checkbox setState:NSOnState]
+  var checkbox = [[NSButton alloc] initWithFrame:NSMakeRect(0,0,200,25)];
+  [checkbox setButtonType:NSSwitchButton];
+  [checkbox setTitle:@"Draw Slice"];
+  [checkbox setState:NSOnState];
 
-  [accessory addSubview:checkbox]
-  [accessory addSubview:combobox]
+  [accessory addSubview:checkbox];
+  [accessory addSubview:combobox];
 
-  var alert = [[NSAlert alloc] init]
-  [alert setMessageText:msg]
-  [alert addButtonWithTitle:'OK']
-  [alert addButtonWithTitle:'Cancel']
-  [alert setAccessoryView:accessory]
+  var alert = [[NSAlert alloc] init];
+  [alert setMessageText:msg];
+  [alert addButtonWithTitle:'OK'];
+  [alert addButtonWithTitle:'Cancel'];
+  [alert setAccessoryView:accessory];
 
-  var responseCode = [alert runModal]
-  var combosel = [combobox indexOfSelectedItem]
-  var checksel = [checkbox state] == NSOnState
+  var responseCode = [alert runModal];
+  var combosel = [combobox indexOfSelectedItem];
+  var checksel = [checkbox state] == NSOnState;
 
-  return [responseCode, combosel, checksel]
+  return [responseCode, combosel, checksel];
 }
-var options = ['1x', '2x']
-var choice = createSelect('What resolution are you working at?', options, 1)
-var labelMultiplier = choice[1] + 1
-var shouldDrawSlice = choice[2]
-log(choice[0])
+var options = ['1x', '2x'];
+var choice = createSelect('What resolution are you working at?', options, 1);
+var scaleFactor = choice[1] + 1;
+var shouldDrawSlice = choice[2];
 
 if (choice[0] == NSAlertFirstButtonReturn) {
-  //
   // Name artboards
-  //
 
   // New group to hold labels
   var group = [[doc currentPage] addLayerOfType: 'group'];
@@ -66,9 +63,9 @@ if (choice[0] == NSAlertFirstButtonReturn) {
     var textLayer = [group addLayerOfType: 'text'];
     [textLayer setName: artboardName];
     [textLayer setStringValue: artboardName];
-    [textLayer setFontSize: 14 * labelMultiplier];
+    [textLayer setFontSize: 14 * scaleFactor];
     [textLayer setFontPostscriptName: 'Helvetica Neue'];
-    [textLayer setLineSpacing: 16 * labelMultiplier];
+    [textLayer setLineSpacing: 16 * scaleFactor];
 
     var color = [[MSColor alloc] init];
     [color setRed: 188/255];
@@ -78,8 +75,8 @@ if (choice[0] == NSAlertFirstButtonReturn) {
     [textLayer setTextColor: color];
 
     // Position label approximately where it is in Sketch
-    [[textLayer frame] setX:[[artboard frame] x] + (2 * labelMultiplier)];
-    [[textLayer frame] setY:[[artboard frame] y] - [[textLayer frame] height] - (4 * labelMultiplier)];
+    [[textLayer frame] setX:[[artboard frame] x] + (2 * scaleFactor)];
+    [[textLayer frame] setY:[[artboard frame] y] - [[textLayer frame] height] - (4 * scaleFactor)];
   }
 
   // Select each layer to make group the size of the layers within
@@ -93,13 +90,9 @@ if (choice[0] == NSAlertFirstButtonReturn) {
   [group setIsLocked:true];
   [doc showMessage: [groupLayers count] + ' artboard labels created in "Artboard labels" group.'];
 
-
-
-  //
-  // Draw slice
-  //
-
   if (shouldDrawSlice) {
+    // Draw slice
+
     var minX = NSIntegerMax,
         minY = NSIntegerMax,
         maxX = NSIntegerMin,
@@ -135,7 +128,8 @@ if (choice[0] == NSAlertFirstButtonReturn) {
     }
 
     var slice = [MSSliceLayer new];
-    var padding = 100;
+    [slice setName: [doc displayName].split(".sketch")[0]];
+    var padding = 100 * scaleFactor;
 
     [[slice frame] setX: minX - padding];
     [[slice frame] setY: minY - padding];
