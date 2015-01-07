@@ -6,7 +6,7 @@ var artboards = [[doc currentPage] artboards];
 
 // Remove any previous existing Artboard labels group
 allLayers = [[doc currentPage] layers];
-for(var i=0; i< allLayers.length(); i++){
+for(var i=0; i< [allLayers count]; i++){
   var layer = [allLayers objectAtIndex:i];
   if ([layer name] == groupName) {
     [layer removeFromParent];
@@ -58,7 +58,7 @@ if (choice[0] == NSAlertFirstButtonReturn) {
   var group = [[doc currentPage] addLayerOfType: 'group'];
   [group setName: groupName]
 
-  for(var i=0; i< artboards.length(); i++){
+  for(var i=0; i< [artboards count]; i++){
     var artboard = artboards[i];
     var artboardName = [artboard name];
 
@@ -84,7 +84,7 @@ if (choice[0] == NSAlertFirstButtonReturn) {
 
   // Select each layer to make group the size of the layers within
   groupLayers = [group layers];
-  for(var i=0; i< groupLayers.length(); i++){
+  for(var i=0; i< [groupLayers count]; i++){
     var layer = [groupLayers objectAtIndex:i];
     [layer select:true byExpandingSelection:false];
   }
@@ -106,8 +106,7 @@ if (choice[0] == NSAlertFirstButtonReturn) {
         maxY = NSIntegerMin;
 
     // Find min and max coordinates (+layer dimension) to figure out where to draw slice
-    allLayers = [[doc currentPage] layers];
-    for(var i=0; i< allLayers.length(); i++){
+    for(var i=0; i< [allLayers count]; i++){
       var layer = [allLayers objectAtIndex:i];
       if ([layer isVisible]) {
         x = [[layer frame] x];
