@@ -92,50 +92,20 @@ if (choice[0] == NSAlertFirstButtonReturn) {
   [group setIsLocked:true];
   [doc showMessage: [groupLayers count] + ' artboard labels created in "Artboard labels" group.'];
 
-
-
-  //
   // Draw slice
-  //
 
   if (shouldDrawSlice) {
-    var minX = 999999999;
-    var minY = 999999999;
-    var maxX = -999999999;
-    var maxY = -999999999;
-
-    // Find min and max coordinates (+layer dimension) to figure out where to draw slice
-    allLayers = [[doc currentPage] layers];
-    for(var i=0; i< allLayers.length(); i++){
-      var layer = [allLayers objectAtIndex:i];
-      if ([layer isVisible]) {
-        x = [[layer frame] x];
-        y = [[layer frame] y];
-        w = [[layer frame] width];
-        h = [[layer frame] height];
-
-        if (x < minX) {
-          minX = x;
-        } else if ((x + w) > maxX) {
-          maxX = (x + w);
-        }
-
-        if (y < minY) {
-          minY = y;
-        } else if ((y + h) > maxY) {
-          maxY = (y + h);
-        }
-      }
-    }
 
     // draw slice
     var slice = [MSSliceLayer new];
-    var padding = 100;
+    var padding = 200;
 
-    [[slice frame] setX:minX - padding];
-    [[slice frame] setY:minY - padding];
-    [[slice frame] setWidth:maxX - minX + (padding*2)];
-    [[slice frame] setHeight:maxY - minY + (padding*2)];
+	var bounds=MSLayerGroup.groupBoundsForLayers(artboards);
+
+    [[slice frame] setX:bounds.x() - padding];
+    [[slice frame] setY:bounds.y() - padding];
+    [[slice frame] setWidth:bounds.width() + (padding*2)];
+    [[slice frame] setHeight:bounds.height() + (padding*2)];
 
     [group addSlice: slice];
     [[doc currentView] refresh];
