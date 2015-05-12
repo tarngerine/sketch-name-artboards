@@ -15,39 +15,12 @@ for(var i=0; i< [allLayers count]; i++){
 }
 
 // Query resolution for appropriate font size and spacings, ask if slice should be drawn
-function createSelect(msg, items, selectedItemIndex){
-  selectedItemIndex = selectedItemIndex || 0;
-
-  var accessory = [[NSView alloc] initWithFrame:NSMakeRect(0,0,200,62)];
-
-  var combobox = [[NSComboBox alloc] initWithFrame:NSMakeRect(0,37,200,25)];
-  [combobox addItemsWithObjectValues:items];
-  [combobox selectItemAtIndex:selectedItemIndex];
-
-  var checkbox = [[NSButton alloc] initWithFrame:NSMakeRect(0,0,200,25)];
-  [checkbox setButtonType:NSSwitchButton];
-  [checkbox setTitle:@"Draw Slice"];
-  [checkbox setState:NSOnState];
-
-  [accessory addSubview:checkbox];
-  [accessory addSubview:combobox];
-
-  var alert = [[NSAlert alloc] init];
-  [alert setMessageText:msg];
-  [alert addButtonWithTitle:'OK'];
-  [alert addButtonWithTitle:'Cancel'];
-  [alert setAccessoryView:accessory];
-
-  var responseCode = [alert runModal];
-  var combosel = [combobox indexOfSelectedItem];
-  var checksel = [checkbox state] == NSOnState;
-
-  return [responseCode, combosel, checksel];
-}
-var options = ['1x', '2x'];
-var choice = createSelect('What resolution are you working at?', options, 1);
-var scaleFactor = choice[1] + 1;
+var options = ['.5x', '1x', '1.5x', '2x', '3x'];
+var choice = createSelect('What resolution are you working at?', options, 2);
+var scaleFactor = parseFloat(choice[1]);
+log("Resolution: " + scaleFactor + "x");
 var shouldDrawSlice = choice[2];
+log("Should Draw Slice? " + shouldDrawSlice);
 
 if (choice[0] == NSAlertFirstButtonReturn) {
   // Name artboards
@@ -92,8 +65,7 @@ if (choice[0] == NSAlertFirstButtonReturn) {
   [doc showMessage: [groupLayers count] + ' artboard labels created in "Artboard labels" group.'];
 
   if (shouldDrawSlice) {
-    // Draw slice
-
+    // Get bounds
     var minX = NSIntegerMax,
         minY = NSIntegerMax,
         maxX = NSIntegerMin,
@@ -102,12 +74,12 @@ if (choice[0] == NSAlertFirstButtonReturn) {
     // Find min and max coordinates (+layer dimension) to figure out where to draw slice
     for(var i=0; i< [allLayers count]; i++){
       var layer = [allLayers objectAtIndex:i];
-      if ([layer isVisible]) {
+      if ([layer isVisible] && !([layer name] == groupName)) {
         x = [[layer frame] x];
         y = [[layer frame] y];
         w = [[layer frame] width];
         h = [[layer frame] height];
-        log("Accounting for <" + [layer name] + "> at x:" + x + ", y:" + y + ", w:" + w + ", h:" + h);
+        log(">> Accounting for <" + [layer name] + "> at x:" + x + ", y:" + y + ", w:" + w + ", h:" + h);
 
         if (x < minX) {
           minX = x;
@@ -128,6 +100,7 @@ if (choice[0] == NSAlertFirstButtonReturn) {
       }
     }
 
+    // Draw slice
     var slice = [MSSliceLayer new];
     [slice setName: [doc displayName].split(".sketch")[0]];
     var padding = 100 * scaleFactor;
@@ -142,4 +115,39 @@ if (choice[0] == NSAlertFirstButtonReturn) {
     [slice select:true byExpandingSelection:false];
     [[doc currentView] refresh];
   }
+}
+
+//
+// Helpers
+//
+
+function createSelect(msg, items, selectedItemIndex){
+  selectedItemIndex = selectedItemIndex || 0;
+
+  var accessory = [[NSView alloc] initWithFrame:NSMakeRect(0,0,200,62)];
+
+  var combobox = [[NSComboBox alloc] initWithFrame:NSMakeRect(0,37,200,25)];
+  [combobox addItemsWithObjectValues:items];
+  [combobox selectItemAtIndex:selectedItemIndex];
+
+  var checkbox = [[NSButton alloc] initWithFrame:NSMakeRect(0,0,200,25)];
+  [checkbox setButtonType:NSSwitchButton];
+  [checkbox setTitle:@"Draw Slice"];
+  [checkbox setState:NSOnState];
+
+  [accessory addSubview:checkbox];
+  [accessory addSubview:combobox];
+
+  var alert = [[NSAlert alloc] init];
+  [alert setMessageText:msg];
+  [alert addButtonWithTitle:'OK'];
+  [alert addButtonWithTitle:'Cancel'];
+  [alert setAccessoryView:accessory];
+
+  var responseCode = [alert runModal];
+  var combosel = [combobox objectValueOfSelectedItem];
+  if (!combosel) combosel = [combobox stringValue];
+  var checksel = [checkbox state] == NSOnState;
+
+  return [responseCode, combosel, checksel];
 }
