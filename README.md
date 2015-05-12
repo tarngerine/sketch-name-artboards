@@ -8,8 +8,4 @@ Goes through each artboard and creates a text label where the artboard name sits
 If you move / change artboard names, just re-run the plugin and it will replace the old 'Artboard labels' group with a new one! Careful not to have other groups with the same name — it will be erased.
 
 # Changelog
-*v1.2.1*
-- Fixes a logic error that could cause slices to be drawn incorrectly if artboards are in a particular order.
-
-*v1.2*
-- Now also draws a slice around all visible layers/artboards named 'Slice'. There's a checkbox in the prompt that allows you to toggle this.
+![View releases](https://github.com/tarngerine/sketch-name-artboards/releases)
