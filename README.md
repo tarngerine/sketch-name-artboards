@@ -8,4 +8,4 @@ Goes through each artboard and creates a text label where the artboard name sits
 If you move / change artboard names, just re-run the plugin and it will replace the old 'Artboard labels' group with a new one! Careful not to have other groups with the same name — it will be erased.
 
 # Changelog
-![View releases](https://github.com/tarngerine/sketch-name-artboards/releases)
+[View releases](https://github.com/tarngerine/sketch-name-artboards/releases)
