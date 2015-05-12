@@ -1,0 +1,28 @@
+{
+    "name": "Name Artboards",
+    "description": "Create text layers for the names of all artboards, and optionally draws a slice around everything for easy export.",
+    "author": "Julius Tarng",
+    "homepage": "http://github.com/tarngerine/sketch-name-artboards",
+    "version": 1.0,
+    "identifier": "com.tarng.sketch-name-artboards",
+    "updateURL": "https://github.com/tarngerine/sketch-name-artboards",
+    "compatibleVersion": 3.3,
+    "bundleVersion": 1
+    "commands":
+        [
+          {
+            "name": "Name Artboards",
+            "identifier": "name-artboards",
+            "shortcut": "ctrl cmd n",
+            "script": "Name Artboards.cocoascript"
+          },
+        ],
+    "menu":
+        {
+          "isRoot": "true",
+          "items": 
+          [
+            "name-artboards"
+          ]
+        }
+}
