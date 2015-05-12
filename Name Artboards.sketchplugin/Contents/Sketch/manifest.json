@@ -7,22 +7,22 @@
     "identifier": "com.tarng.sketch-name-artboards",
     "updateURL": "https://github.com/tarngerine/sketch-name-artboards",
     "compatibleVersion": 3.3,
-    "bundleVersion": 1
+    "bundleVersion": 1,
     "commands":
-        [
-          {
-            "name": "Name Artboards",
-            "identifier": "name-artboards",
-            "shortcut": "ctrl cmd n",
-            "script": "Name Artboards.cocoascript"
-          },
-        ],
-    "menu":
+      [
         {
-          "isRoot": "true",
-          "items": 
-          [
-            "name-artboards"
-          ]
-        }
+          "name": "Name Artboards",
+          "identifier": "name-artboards",
+          "shortcut": "ctrl cmd n",
+          "script": "Name Artboards.cocoascript"
+        },
+      ],
+    "menu":
+      {
+        "isRoot": true,
+        "items": 
+        [
+          "name-artboards"
+        ]
+      }
 }
