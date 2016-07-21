@@ -28,19 +28,21 @@ var onRun = function(context) {
     // Name artboards
 
     // New group to hold labels
-    var group = [[doc currentPage] addLayerOfType: 'group'];
+    var group = [[MSLayerGroup alloc] init];
     [group setName: groupName]
+    [[doc currentPage] addLayers:[group]];
 
     for(var i=0; i< [artboards count]; i++){
       var artboard = artboards[i];
       var artboardName = [artboard name];
 
       // Create label and set properties
-      var textLayer = [group addLayerOfType: 'text'];
+      var textLayer = [[MSTextLayer alloc] init];
+      [group addLayers:[textLayer]];
       [textLayer setName: artboardName];
       [textLayer setStringValue: artboardName];
       [textLayer setFontSize: 14 * scaleFactor];
-      [textLayer setFontPostscriptName: 'Helvetica Neue'];
+      [textLayer setFontPostscriptName: 'SF UI Text'];
       [textLayer setLineSpacing: 16 * scaleFactor];
 
       var color = [[MSColor alloc] init];
@@ -113,9 +115,8 @@ var onRun = function(context) {
       [[slice frame] setHeight: maxY - minY + (padding * 2)];
       log(">> Drawing slice from (" + minX + ", " + minY + ") of dimension (" + (maxX - minX + (padding*2)) + ", " + (maxY - minY + (padding*2)) + ")" )
 
-      [group addSlice: slice];
+      [group addLayers:[slice]];
       [slice select:true byExpandingSelection:false];
-      [[doc currentView] refresh];
     }
   }
 }
