@@ -57,42 +57,6 @@ var onRun = function(context) {
     [group setName: groupName]
     [[doc currentPage] addLayers:[group]];
 
-    for(var i=0; i< [artboards count]; i++){
-      var artboard = artboards[i];
-      var artboardName = [artboard name];
-
-      // Create label and set properties
-      var textLayer = [[MSTextLayer alloc] init];
-      [group addLayers:[textLayer]];
-      [textLayer setName: artboardName];
-      [textLayer setStringValue: artboardName];
-      [textLayer setFontSize: 14 * scaleFactor];
-      [textLayer setFontPostscriptName: 'SF UI Text'];
-      [textLayer setLineSpacing: 16 * scaleFactor];
-
-      var color = [[MSColor alloc] init];
-      [color setRed: 188/255];
-      [color setGreen: 188/255];
-      [color setBlue: 188/255];
-      [color setAlpha: 1.0];
-      [textLayer setTextColor: color];
-
-      // Position label approximately where it is in Sketch
-      [[textLayer frame] setX:[[artboard frame] x] + (2 * scaleFactor)];
-      [[textLayer frame] setY:[[artboard frame] y] - [[textLayer frame] height] - (4 * scaleFactor)];
-    }
-
-    // Select each layer to make group the size of the layers within
-    groupLayers = [group layers];
-    for(var i=0; i< [groupLayers count]; i++){
-      var layer = [groupLayers objectAtIndex:i];
-      [layer select:true byExpandingSelection:false];
-    }
-
-    // Lock group
-    [group setIsLocked:true];
-    [doc showMessage: [groupLayers count] + ' artboard labels created in "Artboard labels" group.'];
-
     if (shouldDrawSlice) {
       // Get bounds
       var minX = NSIntegerMax,
@@ -143,6 +107,42 @@ var onRun = function(context) {
       [group addLayers:[slice]];
       [slice select:true byExpandingSelection:false];
     }
+
+    for(var i=0; i< [artboards count]; i++){
+      var artboard = artboards[i];
+      var artboardName = [artboard name];
+
+      // Create label and set properties
+      var textLayer = [[MSTextLayer alloc] init];
+      [group addLayers:[textLayer]];
+      [textLayer setName: artboardName];
+      [textLayer setStringValue: artboardName];
+      [textLayer setFontSize: 14 * scaleFactor];
+      [textLayer setFontPostscriptName: 'SF UI Text'];
+      [textLayer setLineHeight: 16 * scaleFactor];
+
+      var color = [[MSColor alloc] init];
+      [color setRed: 188/255];
+      [color setGreen: 188/255];
+      [color setBlue: 188/255];
+      [color setAlpha: 1.0];
+      [textLayer setTextColor: color];
+
+      // Position label approximately where it is in Sketch
+      [[textLayer frame] setX:[[artboard frame] x] + (2 * scaleFactor)];
+      [[textLayer frame] setY:[[artboard frame] y] - [[textLayer frame] height] - (4 * scaleFactor)];
+    }
+
+    // Select each layer to make group the size of the layers within
+    groupLayers = [group layers];
+    for(var i=0; i< [groupLayers count]; i++){
+      var layer = [groupLayers objectAtIndex:i];
+      [layer select:true byExpandingSelection:false];
+    }
+
+    // Lock group
+    [group setIsLocked:true];
+    [doc showMessage: [groupLayers count] + ' artboard labels created in "Artboard labels" group.'];
   }
 }
 
