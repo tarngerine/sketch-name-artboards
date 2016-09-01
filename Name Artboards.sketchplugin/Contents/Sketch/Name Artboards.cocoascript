@@ -1,7 +1,22 @@
-// Name Artboards v1.2 — Julius Tarng
+@import './lib/FBSettings.js'
 
 var onRun = function(context) {
   var doc = context.document;
+
+  const settings = FBSettings.pluginSettings((context.plugin).identifier(), "JTNameArtboards");
+  const kSettingsKeys = {
+    "drawSlice": "drawSlice",
+    "selectedOptionIndex": "selectedOptionIndex",
+  }
+
+  // initialize defaults
+  if (!settings.getSetting(kSettingsKeys.drawSlice)) {
+    settings.updateSetting(kSettingsKeys.drawSlice, true);
+  }
+  var options = ['.5x', '1x', '1.5x', '2x', '3x'];
+  if (!settings.getSetting(kSettingsKeys.selectedOptionIndex)) {
+    settings.updateSetting(kSettingsKeys.selectedOptionIndex, 3); // for 2x
+  }
 
   log("========================= sketch-name-artboards log =========================");
   var groupName = 'Artboard labels'
@@ -17,11 +32,21 @@ var onRun = function(context) {
   }
 
   // Query resolution for appropriate font size and spacings, ask if slice should be drawn
-  var options = ['.5x', '1x', '1.5x', '2x', '3x'];
-  var choice = createSelect('What resolution are you working at?', options, 3);
-  var scaleFactor = parseFloat(choice[1]);
+  var choice = createSelect(
+      'What resolution are you working at?',
+      options,
+      settings.getSetting(kSettingsKeys.selectedOptionIndex),
+      settings.getSetting(kSettingsKeys.drawSlice));
+
+  const selectedOptionIndex = choice[1];
+  if (selectedOptionIndex > -1) {
+    settings.updateSetting(kSettingsKeys.selectedOptionIndex, selectedOptionIndex);
+  }
+  var scaleFactor = parseFloat(options[selectedOptionIndex]);
   log("Resolution: " + scaleFactor + "x");
+
   var shouldDrawSlice = choice[2];
+  settings.updateSetting(kSettingsKeys.drawSlice, shouldDrawSlice);
   log("Should Draw Slice? " + shouldDrawSlice);
 
   if (choice[0] == NSAlertFirstButtonReturn) {
@@ -125,7 +150,7 @@ var onRun = function(context) {
 // Helpers
 //
 
-function createSelect(msg, items, selectedItemIndex){
+function createSelect(msg, items, selectedItemIndex, drawSlice){
   selectedItemIndex = selectedItemIndex || 0;
 
   var accessory = [[NSView alloc] initWithFrame:NSMakeRect(0,0,200,62)];
@@ -137,7 +162,11 @@ function createSelect(msg, items, selectedItemIndex){
   var checkbox = [[NSButton alloc] initWithFrame:NSMakeRect(0,0,200,25)];
   [checkbox setButtonType:NSSwitchButton];
   [checkbox setTitle:@"Draw Slice"];
-  [checkbox setState:NSOnState];
+  if (drawSlice == true) {
+    [checkbox setState:NSOnState];
+  } else {
+    [checkbox setState:NSOffState];
+  }
 
   [accessory addSubview:checkbox];
   [accessory addSubview:combobox];
@@ -149,7 +178,7 @@ function createSelect(msg, items, selectedItemIndex){
   [alert setAccessoryView:accessory];
 
   var responseCode = [alert runModal];
-  var combosel = [combobox objectValueOfSelectedItem];
+  var combosel = [combobox indexOfSelectedItem];
   if (!combosel) combosel = [combobox stringValue];
   var checksel = [checkbox state] == NSOnState;
 
