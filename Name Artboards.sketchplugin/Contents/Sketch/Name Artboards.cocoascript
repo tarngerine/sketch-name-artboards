@@ -108,13 +108,18 @@ var onRun = function(context) {
       [slice select:true byExpandingSelection:false];
     }
 
+    var labels = [];
     for(var i=0; i< [artboards count]; i++){
       var artboard = artboards[i];
       var artboardName = [artboard name];
 
       // Create label and set properties
-      var textLayer = [[MSTextLayer alloc] init];
-      [group addLayers:[textLayer]];
+      var textLayer = [[MSTextLayer alloc] initWithFrame:CGRectMake(
+        [[artboard frame] x] + (2 * scaleFactor),
+        [[artboard frame] y] - (20 * scaleFactor),
+        artboard.frame().width(),
+        16 * scaleFactor
+      )];
       [textLayer setName: artboardName];
       [textLayer setStringValue: artboardName];
       [textLayer setFontSize: 14 * scaleFactor];
@@ -128,16 +133,16 @@ var onRun = function(context) {
       [color setAlpha: 1.0];
       [textLayer setTextColor: color];
 
-      // Position label approximately where it is in Sketch
-      [[textLayer frame] setX:[[artboard frame] x] + (2 * scaleFactor)];
-      [[textLayer frame] setY:[[artboard frame] y] - [[textLayer frame] height] - (4 * scaleFactor)];
+      labels.push(textLayer);
     }
+
+    [group addLayers:labels];
 
     // Select each layer to make group the size of the layers within
     groupLayers = [group layers];
     for(var i=0; i< [groupLayers count]; i++){
       var layer = [groupLayers objectAtIndex:i];
-      [layer select:true byExpandingSelection:false];
+      [layer select:true byExtendingSelection:false];
     }
 
     // Lock group
