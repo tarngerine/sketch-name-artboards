@@ -109,6 +109,8 @@ var onRun = function(context) {
     }
 
     var labels = [];
+    const labelLineHeight = 16 * scaleFactor;
+    const labelFontSize = 14 * scaleFactor;
     for(var i=0; i< [artboards count]; i++){
       var artboard = artboards[i];
       var artboardName = [artboard name];
@@ -116,15 +118,15 @@ var onRun = function(context) {
       // Create label and set properties
       var textLayer = [[MSTextLayer alloc] initWithFrame:CGRectMake(
         [[artboard frame] x] + (2 * scaleFactor),
-        [[artboard frame] y] - (20 * scaleFactor),
-        artboard.frame().width(),
-        16 * scaleFactor
+        [[artboard frame] y] - labelLineHeight - (4 * scaleFactor),
+        0,
+        labelLineHeight
       )];
       [textLayer setName: artboardName];
       [textLayer setStringValue: artboardName];
-      [textLayer setFontSize: 14 * scaleFactor];
+      [textLayer setFontSize: labelFontSize];
       [textLayer setFontPostscriptName: 'SF UI Text'];
-      [textLayer setLineHeight: 16 * scaleFactor];
+      [textLayer setLineHeight: labelLineHeight];
 
       var color = [[MSColor alloc] init];
       [color setRed: 188/255];
