@@ -96,11 +96,7 @@ var onRun = function(context) {
       [textLayer setFontPostscriptName: 'SF UI Text'];
       [textLayer setLineHeight: labelLineHeight];
 
-      var color = [[MSColor alloc] init];
-      [color setRed: 188/255];
-      [color setGreen: 188/255];
-      [color setBlue: 188/255];
-      [color setAlpha: 1.0];
+      var color = [[MSImmutableColor colorWithRed:188/255 green:188/255 blue:188/255 alpha:1.0];
       [textLayer setTextColor: color];
 
       labels.push(textLayer);
